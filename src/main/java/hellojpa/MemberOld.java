@@ -4,13 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) //필수
-public class MemberOld {
+public class MemberOld extends BaseEntity{
 
     @Id
     private Long id;
@@ -23,10 +24,10 @@ public class MemberOld {
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate;
-
-    private LocalDate lastModifiedDate;
+//    @Temporal(TemporalType.TIMESTAMP)
+//    private Date createdDate;
+//
+//    private LocalDate lastModifiedDate;
 
     @Lob
     private String description;
