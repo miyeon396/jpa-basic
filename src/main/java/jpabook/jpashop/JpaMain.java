@@ -1,11 +1,11 @@
-package hellojpa;
+package jpabook.jpashop;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 
-public class Main {
+public class JpaMain {
     public static void main(String[] args) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello"); //어플리케이션 로딩시점에 딱 하나만
 
@@ -15,11 +15,6 @@ public class Main {
         tx.begin();
 
         try {
-            Member member = new Member();
-            member.setId(1L);
-            member.setName("miyeon");
-            em.persist(member);
-
             tx.commit();
 
         } catch (Exception e) {
