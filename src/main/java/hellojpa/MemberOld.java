@@ -1,17 +1,14 @@
 package hellojpa;
 
 import jakarta.persistence.*;
+import jpabook.jpashop.domain.BaseEntity;
 import lombok.*;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) //필수
-public class MemberOld extends BaseEntity{
+public class MemberOld extends BaseEntity {
 
     @Id
     private Long id;

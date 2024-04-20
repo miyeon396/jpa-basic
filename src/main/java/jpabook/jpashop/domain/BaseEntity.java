@@ -1,4 +1,4 @@
-package hellojpa;
+package jpabook.jpashop.domain;
 
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
