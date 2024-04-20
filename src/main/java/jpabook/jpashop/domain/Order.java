@@ -25,6 +25,10 @@ public class Order {
     @JoinColumn(name = "MEMBER_ID") //테이블 MEMBER : ORDER = 1 : N -> ORDER에 MemberID외래키 갖고있음 난(=Order) 주인이야 -> JoinCloumn
     private Member member;
 
+    @OneToOne
+    @JoinColumn(name = "DELIVERY_ID")
+    private Delivery delivery;
+
     @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems = new ArrayList<>();
 
