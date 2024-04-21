@@ -21,7 +21,19 @@ public class MemberOld {
 
     //주소
     @Embedded
-    private Address2 address;
+    private Address2 homeAddress;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name="city",
+                column = @Column(name="WORK_CITY")),
+            @AttributeOverride(name="street",
+                    column = @Column(name="WORK_STREET")),
+            @AttributeOverride(name="zipcode",
+                    column = @Column(name="WORK_ZIPCODE")),
+
+    })
+    private Address2 workAddress;
 
 
 
