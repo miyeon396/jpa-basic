@@ -1,14 +1,13 @@
 package hellojpa;
 
 import jakarta.persistence.*;
-import jpabook.jpashop.domain.BaseEntity;
 import lombok.*;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED) //필수
-public class MemberOld extends BaseEntity {
+public class MemberOld {
 
     @Id
     private Long id;
@@ -16,20 +15,31 @@ public class MemberOld extends BaseEntity {
     @Column(name = "name")
     private String name;
 
-    private Integer age;
+    //Period
+    @Embedded
+    private Period2 workPeriod;
 
-    @Enumerated(EnumType.STRING)
-    private RoleType roleType;
+    //주소
+    @Embedded
+    private Address2 address;
 
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private Date createdDate;
+
+
+
+//    private Integer age;
 //
-//    private LocalDate lastModifiedDate;
-
-    @Lob
-    private String description;
-
-    @Transient
-    private int temp; //메모리에서만 쓰겠음. 디비와 매핑하지 말 것.
+//    @Enumerated(EnumType.STRING)
+//    private RoleType roleType;
+//
+////    @Temporal(TemporalType.TIMESTAMP)
+////    private Date createdDate;
+////
+////    private LocalDate lastModifiedDate;
+//
+//    @Lob
+//    private String description;
+//
+//    @Transient
+//    private int temp; //메모리에서만 쓰겠음. 디비와 매핑하지 말 것.
 
 }
