@@ -1,6 +1,7 @@
 package hellojpa.items;
 
 import hellojpa.Item2;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
