@@ -472,6 +472,70 @@ class JPQLTest {
         emf.close();
     }
 
+    @Test
+    @Transactional
+    public void JPQL_벌크_테스트() throws Exception {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+
+        EntityManager em = emf.createEntityManager();
+
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
+        try {
+
+            TeamJPQL teamA = new TeamJPQL();
+            teamA.setName("teamA");
+            em.persist(teamA);
+
+            TeamJPQL teamB= new TeamJPQL();
+            teamB.setName("teamB");
+            em.persist(teamB);
+
+
+            MemberJPQL member1 = new MemberJPQL();
+            member1.setUsername("member1");
+            member1.setTeam(teamA);
+            member1.setAge(10);
+            em.persist(member1);
+
+            MemberJPQL member2 = new MemberJPQL();
+            member2.setUsername("member2");
+            member2.setTeam(teamA);
+            member2.setAge(12);
+            em.persist(member2);
+
+            MemberJPQL member3 = new MemberJPQL();
+            member3.setUsername("member3");
+            member3.setTeam(teamB);
+            member3.setAge(11);
+            em.persist(member3);
+
+
+            // FLUSH 자동 호출
+            // 모든 회원의 나이를 20살로 바꿔
+            int resultCount = em.createQuery("update MemberJPQL m set m.age = 20")
+                    .executeUpdate();
+
+            System.out.println("resultCount = " + resultCount);
+
+            System.out.println("member1.getAge() = " + member1.getAge());
+            System.out.println("member2.getAge() = " + member2.getAge());
+            System.out.println("member3.getAge() = " + member3.getAge());
+
+
+            tx.commit();
+
+        } catch (Exception e) {
+            tx.rollback();
+        } finally {
+            em.close();
+        }
+
+
+        emf.close();
+    }
+
 
 
 }
