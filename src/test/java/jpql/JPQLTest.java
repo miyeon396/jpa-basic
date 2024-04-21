@@ -167,6 +167,53 @@ class JPQLTest {
         emf.close();
     }
 
+    @Test
+    @Transactional
+    public void JPQL_페이징_테스트() throws Exception {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+
+        EntityManager em = emf.createEntityManager();
+
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
+        try {
+
+            for (int i=0; i<100; i++) {
+                MemberJPQL member = new MemberJPQL();
+                member.setUsername("member"+i);
+                member.setAge(i);
+                em.persist(member);
+            }
+
+
+            em.flush();
+            em.clear();
+            // 깔끔하게 클리어
+
+            List<MemberJPQL> resultList = em.createQuery("select m from MemberJPQL m order by m.age desc", MemberJPQL.class)
+                    .setFirstResult(0)
+                    .setMaxResults(10)
+                    .getResultList();
+
+            System.out.println("resultList.size() = " + resultList.size());
+            for (MemberJPQL member1 : resultList) {
+                System.out.println("member1 = " + member1);
+            }
+
+
+            tx.commit();
+
+        } catch (Exception e) {
+            tx.rollback();
+        } finally {
+            em.close();
+        }
+
+
+        emf.close();
+    }
+
 
 
 }
