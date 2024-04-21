@@ -22,5 +22,10 @@ public class MemberJPQL {
     @JoinColumn(name = "TEAM_ID")
     private TeamJPQL team;
 
+    public void changeTeam(TeamJPQL team) { // 연관관계 편의 메서드
+        this.team = team;
+        team.getMembers().add(this);
+    }
+
 
 }

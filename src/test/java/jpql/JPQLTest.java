@@ -214,6 +214,56 @@ class JPQLTest {
         emf.close();
     }
 
+    @Test
+    @Transactional
+    public void JPQL_조인_테스트() throws Exception {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+
+        EntityManager em = emf.createEntityManager();
+
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
+        try {
+
+            TeamJPQL team = new TeamJPQL();
+            team.setName("teamA");
+            em.persist(team);
+
+            MemberJPQL member = new MemberJPQL();
+            member.setUsername("member1");
+            member.setAge(10);
+
+            member.setTeam(team);
+
+            em.persist(member);
+
+
+            em.flush();
+            em.clear();
+            // 깔끔하게 클리어
+
+            List<MemberJPQL> resultList = em.createQuery("select m from MemberJPQL m inner join m.team t", MemberJPQL.class)
+                    .getResultList();
+
+            List<MemberJPQL> resultList2 = em.createQuery("select m from MemberJPQL m left join m.team t", MemberJPQL.class)
+                    .getResultList();
+
+            List<MemberJPQL> resultList3 = em.createQuery("select m from MemberJPQL m, TeamJPQL t", MemberJPQL.class)
+                    .getResultList();
+
+            tx.commit();
+
+        } catch (Exception e) {
+            tx.rollback();
+        } finally {
+            em.close();
+        }
+
+
+        emf.close();
+    }
+
 
 
 }
