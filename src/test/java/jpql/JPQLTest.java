@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -251,6 +252,150 @@ class JPQLTest {
 
             List<MemberJPQL> resultList3 = em.createQuery("select m from MemberJPQL m, TeamJPQL t", MemberJPQL.class)
                     .getResultList();
+
+            tx.commit();
+
+        } catch (Exception e) {
+            tx.rollback();
+        } finally {
+            em.close();
+        }
+
+
+        emf.close();
+    }
+
+    @Test
+    @Transactional
+    public void JPQL_엔티티_패치조인_멤버기준_테스트() throws Exception {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+
+        EntityManager em = emf.createEntityManager();
+
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
+        try {
+
+            //회원을 조회하면서 연관된 팀도 함께 조회 (SQL 한번에)
+            // jpql : select m from Member m join fetch m.team
+            // sql : select M.*, T.* FROM MEMBER M INNER JOIN TEAM T ON M.TEAM_ID = T.ID
+            // -> 즉시로딩과 같지만 쿼리로 명시적으로 내가 원하는 타이밍에 동적으로 조회할거야가 되는것임
+
+            TeamJPQL teamA = new TeamJPQL();
+            teamA.setName("teamA");
+            em.persist(teamA);
+
+            TeamJPQL teamB= new TeamJPQL();
+            teamB.setName("teamB");
+            em.persist(teamB);
+
+
+            MemberJPQL member1 = new MemberJPQL();
+            member1.setUsername("member1");
+            member1.setTeam(teamA);
+            member1.setAge(10);
+            em.persist(member1);
+
+            MemberJPQL member2 = new MemberJPQL();
+            member2.setUsername("member2");
+            member2.setTeam(teamA);
+            member2.setAge(10);
+            em.persist(member2);
+
+            MemberJPQL member3 = new MemberJPQL();
+            member3.setUsername("member3");
+            member3.setTeam(teamB);
+            member3.setAge(10);
+            em.persist(member3);
+
+            em.flush();
+            em.clear();
+
+            String query = "select m From MemberJPQL m join fetch m.team";
+
+            List<MemberJPQL> result = em.createQuery(query, MemberJPQL.class)
+                    .getResultList();
+
+            for (MemberJPQL member : result) {
+                System.out.println("member = " + member.getUsername() + " " + member.getTeam().getName());
+                //String query = "select m From MemberJPQL m"; 이거만 한 경우
+                // 회원1, 팀A (SQL)
+                // 회원2, 팀A (1차캐시)
+                // 회원3, 팀B (SQL)
+                // 쿼리 1번 나감 -> N + 1
+                // -> 해결 패치 조인
+            }
+
+            tx.commit();
+
+        } catch (Exception e) {
+            tx.rollback();
+        } finally {
+            em.close();
+        }
+
+
+        emf.close();
+    }
+
+    @Test
+    @Transactional
+    public void JPQL_엔티티_패치조인_팀기준_테스트() throws Exception {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+
+        EntityManager em = emf.createEntityManager();
+
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
+        try {
+
+            TeamJPQL teamA = new TeamJPQL();
+            teamA.setName("teamA");
+            em.persist(teamA);
+
+            TeamJPQL teamB= new TeamJPQL();
+            teamB.setName("teamB");
+            em.persist(teamB);
+
+
+            MemberJPQL member1 = new MemberJPQL();
+            member1.setUsername("member1");
+            member1.setTeam(teamA);
+            member1.setAge(10);
+            em.persist(member1);
+
+            MemberJPQL member2 = new MemberJPQL();
+            member2.setUsername("member2");
+            member2.setTeam(teamA);
+            member2.setAge(10);
+            em.persist(member2);
+
+            MemberJPQL member3 = new MemberJPQL();
+            member3.setUsername("member3");
+            member3.setTeam(teamB);
+            member3.setAge(10);
+            em.persist(member3);
+
+            em.flush();
+            em.clear();
+
+            String query = "select t From TeamJPQL t join fetch t.members";
+
+            List<TeamJPQL> result = em.createQuery(query, TeamJPQL.class)
+                    .getResultList();
+
+            System.out.println(result.size());
+
+//            for (TeamJPQL team : result) {
+//                System.out.println("team = " + team.getName() + " | members = "+team.getMembers().size());
+//
+//                for (MemberJPQL member : team.getMembers() ) {
+//                    System.out.println(" -> member = " + member);
+//                }
+//
+//            }
 
             tx.commit();
 
