@@ -8,6 +8,10 @@ import lombok.ToString;
 @Entity
 @Getter @Setter
 @ToString(exclude = "team")
+@NamedQuery(
+        name = "MemberJPQL.findByUsername",
+        query = "select m from MemberJPQL m where m.username = :username"
+)
 public class MemberJPQL {
 
     @Id

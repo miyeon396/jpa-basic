@@ -409,6 +409,69 @@ class JPQLTest {
         emf.close();
     }
 
+    @Test
+    @Transactional
+    public void JPQL_네임드쿼리_테스트() throws Exception {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+
+        EntityManager em = emf.createEntityManager();
+
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
+        try {
+
+            TeamJPQL teamA = new TeamJPQL();
+            teamA.setName("teamA");
+            em.persist(teamA);
+
+            TeamJPQL teamB= new TeamJPQL();
+            teamB.setName("teamB");
+            em.persist(teamB);
+
+
+            MemberJPQL member1 = new MemberJPQL();
+            member1.setUsername("member1");
+            member1.setTeam(teamA);
+            member1.setAge(10);
+            em.persist(member1);
+
+            MemberJPQL member2 = new MemberJPQL();
+            member2.setUsername("member2");
+            member2.setTeam(teamA);
+            member2.setAge(10);
+            em.persist(member2);
+
+            MemberJPQL member3 = new MemberJPQL();
+            member3.setUsername("member3");
+            member3.setTeam(teamB);
+            member3.setAge(10);
+            em.persist(member3);
+
+            em.flush();
+            em.clear();
+
+            List<MemberJPQL> resultList = em.createNamedQuery("MemberJPQL.findByUsername", MemberJPQL.class)
+                    .setParameter("username", "member1")
+                    .getResultList();
+
+            for (MemberJPQL member : resultList) {
+                System.out.println("member = " + member);
+            }
+
+
+            tx.commit();
+
+        } catch (Exception e) {
+            tx.rollback();
+        } finally {
+            em.close();
+        }
+
+
+        emf.close();
+    }
+
 
 
 }
